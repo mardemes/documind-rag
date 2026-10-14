@@ -1,0 +1,6 @@
+{
+  "name": "DocuMind RAG - Mini-Projeto com IA Generativa",
+  "description": "Mini-projeto acadêmico e profissional de Chatbot RAG (Retrieval Augmented Generation) com empacotamento completo da Unidade 5: testes automatizados, Makefile, README.md oficial e submissão.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
