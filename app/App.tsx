@@ -87,6 +87,29 @@ export default function App() {
   // Packaging State
   const [selectedPackFile, setSelectedPackFile] = useState<string>('README.md');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadZip = async () => {
+    setIsDownloading(true);
+    try {
+      const res = await fetch('/api/download-zip');
+      if (!res.ok) throw new Error('Falha na resposta do servidor: ' + res.status);
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'documind-rag-v1.0.0.zip';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      console.error(err);
+      window.location.href = '/api/download-zip';
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // Checklist State
   const [checklist, setChecklist] = useState([
@@ -576,6 +599,16 @@ def test_retriever_ranks_relevant_chunk():
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>5. Checklist GitHub</span>
+            </button>
+
+            <button
+              onClick={handleDownloadZip}
+              disabled={isDownloading}
+              className="flex items-center gap-1.5 bg-emerald-600/90 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all ml-1 disabled:opacity-50"
+              title="Baixar projeto compactado com histórico Git completo"
+            >
+              <Boxes className="w-3.5 h-3.5" />
+              <span>{isDownloading ? 'Baixando...' : 'Baixar ZIP'}</span>
             </button>
           </nav>
         </div>
@@ -1256,14 +1289,14 @@ def test_retriever_ranks_relevant_chunk():
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
 
-                    <a
-                      href="/api/download-zip"
-                      download="documind-rag-v1.0.0.zip"
-                      className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-all shadow-md shadow-emerald-600/20"
+                    <button
+                      onClick={handleDownloadZip}
+                      disabled={isDownloading}
+                      className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-all shadow-md shadow-emerald-600/20"
                     >
                       <Boxes className="w-3.5 h-3.5" />
-                      <span>Baixar Projeto Pronto (.ZIP)</span>
-                    </a>
+                      <span>{isDownloading ? 'Gerando ZIP...' : 'Baixar Projeto Pronto (.ZIP)'}</span>
+                    </button>
                   </div>
                 </div>
 
